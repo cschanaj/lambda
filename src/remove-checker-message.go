@@ -57,10 +57,8 @@ func main() {
 			continue
 		}
 
-		start := bytes.Index(xml_ctx, []byte("<!--"))
-		end   := bytes.Index(xml_ctx, []byte("-->"))
-
-		if start == -1 || end == -1 || start > end {
+		// work on files with outdated comment only.
+		if bytes.Contains(xml_ctx, []byte("Disabled by https-everywhere-checker because:")) == false {
 			continue
 		}
 
