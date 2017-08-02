@@ -64,6 +64,24 @@ func main() {
 			continue
 		}
 
+
+		// ignore if there is some exclusions
+		if len(r.Exclusions) != 0 {
+			continue
+		}
+
+		// ignore if there is non-trivial rules
+		for _, rule := range r.Rules {
+			if rule.From != "^http:" || rule.To != "https:" {
+				ignore_file = true
+			}
+		}
+
+		if ignore_file {
+			continue
+		}
+
+
 		// ignore file with wildcard securecookie
 		for _, sc := range r.SecureCookies {
 			temp := 0
