@@ -50,6 +50,11 @@ func main() {
 			continue
 		}
 
+		// ignore platform
+		if len(r.Platform) > 0 {
+			continue
+		}
+
 		ignore_file := false
 
 		// ignore file with wildcard target
