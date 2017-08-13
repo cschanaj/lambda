@@ -48,6 +48,10 @@ func main() {
 	// map of 'target'
 	tmap := make(map[string]int)
 
+	// count left-wildcard, right-wildcard 'target'
+	lwc_target := 0
+	rwc_target := 0
+
 	for _, file := range files {
 		// full path of file
 		filename := filepath.Join(os.Args[1], file.Name())
@@ -111,8 +115,17 @@ func main() {
 		}
 
 		// count 'target'
+
 		if len(r.Targets) > 0 {
 			for _, target := range r.Targets {
+				if strings.HasPrefix(target.Host, "*.") {
+					lwc_target += 1
+				}
+
+				if strings.HasSuffix(target.Host, ".*") {
+					rwc_target += 1
+				}
+
 				d, err := publicsuffix.EffectiveTLDPlusOne(target.Host)
 				if err != nil {
 					log.Println(err)
@@ -128,11 +141,14 @@ func main() {
 		}
 	}
 
+
 	fmt.Printf("| %d, %d ", MyMapSum(pmap), len(pmap))
 	fmt.Printf("| %d, %d ", MyMapSum(dmap), len(dmap))
 	fmt.Printf("| %d, %d ", MyMapSum(tmap), len(tmap))
 	fmt.Printf("| %d, %d ", MyMapSum(rmap), len(rmap))
 	fmt.Printf("| %d, %d ", MyMapSum(smap), len(smap))
+	fmt.Printf("|\n")
+	fmt.Printf("| %d | %d ", lwc_target, rwc_target)
 	fmt.Printf("|\n")
 	fmt.Printf("| %d | %d | %d ", pmap["mixedcontent"], pmap["cacert"], pmap["cacert mixedcontent"])
 	fmt.Printf("|\n")
