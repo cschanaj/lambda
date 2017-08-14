@@ -45,6 +45,10 @@ func main() {
 	// map of 'securecookie'
 	smap := make(map[string]int)
 
+	// map of 'exclusion'
+	emap := make(map[string]int)
+	nlah := 0
+
 	// map of 'target'
 	tmap := make(map[string]int)
 
@@ -114,8 +118,24 @@ func main() {
 			}
 		}
 
-		// count 'target'
+		// count 'exclusion'
+		if len(r.Exclusions) > 0 {
+			for _, ex := range r.Exclusions {
+				key := ex.Pattern
 
+				if strings.Contains(key, "?!") {
+					nlah++
+				}
+
+				if _, ok := emap[key]; ok {
+					emap[key]++
+				} else {
+					emap[key] = 1
+				}
+			}
+		}
+
+		// count 'target'
 		if len(r.Targets) > 0 {
 			for _, target := range r.Targets {
 				if strings.HasPrefix(target.Host, "*.") {
@@ -142,16 +162,13 @@ func main() {
 	}
 
 
-	fmt.Printf("| %d, %d ", MyMapSum(pmap), len(pmap))
-	fmt.Printf("| %d, %d ", MyMapSum(dmap), len(dmap))
-	fmt.Printf("| %d, %d ", MyMapSum(tmap), len(tmap))
-	fmt.Printf("| %d, %d ", MyMapSum(rmap), len(rmap))
-	fmt.Printf("| %d, %d ", MyMapSum(smap), len(smap))
-	fmt.Printf("|\n")
-	fmt.Printf("| %d | %d ", lwc_target, rwc_target)
-	fmt.Printf("|\n")
-	fmt.Printf("| %d | %d | %d ", pmap["mixedcontent"], pmap["cacert"], pmap["cacert mixedcontent"])
-	fmt.Printf("|\n")
+	fmt.Printf("|  | %d | %d | %d | %d |\n", MyMapSum(pmap), len(pmap), MyMapSum(dmap), len(dmap))
+	fmt.Printf("|  | %d | %d | %d |\n", pmap["mixedcontent"], pmap["cacert"], pmap["cacert mixedcontent"])
+	fmt.Printf("|  | %d |\n", dmap["failed ruleset test"])
+	fmt.Printf("|  | %d | %d | %d | %d |\n", MyMapSum(tmap), len(tmap), lwc_target, rwc_target)
+	fmt.Printf("|  | %d | %d | %d |\n", MyMapSum(emap), len(emap), nlah)
+	fmt.Printf("|  | %d | %d |\n", MyMapSum(smap), len(smap))
+	fmt.Printf("|  | %d | %d |\n", MyMapSum(rmap), len(rmap))
 }
 
 func MyMapSum(pmap map[string]int) int {
