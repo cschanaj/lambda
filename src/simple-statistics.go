@@ -49,8 +49,13 @@ func main() {
 	emap := make(map[string]int)
 	nlah := 0
 
-	// map of 'target'
+	// map of 'target', key (eTLD)
 	tmap := make(map[string]int)
+
+	// map of 'target', key (target)
+	xmap := make(map[string]int)
+	ndt  := 0
+
 
 	// count left-wildcard, right-wildcard 'target'
 	lwc_target := 0
@@ -157,7 +162,19 @@ func main() {
 				} else {
 					tmap[d] = 1
 				}
+
+				if _, ok := xmap[target.Host]; ok {
+					xmap[target.Host]++
+				} else {
+					xmap[target.Host] = 1
+				}
 			}
+		}
+	}
+
+	for _, v := range xmap {
+		if v > 1 {
+			ndt++
 		}
 	}
 
@@ -165,7 +182,7 @@ func main() {
 	fmt.Printf("|  | %d | %d | %d | %d |\n", MyMapSum(pmap), len(pmap), MyMapSum(dmap), len(dmap))
 	fmt.Printf("|  | %d | %d | %d |\n", pmap["mixedcontent"], pmap["cacert"], pmap["cacert mixedcontent"])
 	fmt.Printf("|  | %d |\n", dmap["failed ruleset test"])
-	fmt.Printf("|  | %d | %d | %d | %d |\n", MyMapSum(tmap), len(tmap), lwc_target, rwc_target)
+	fmt.Printf("|  | %d | %d | %d | %d | %d |\n", MyMapSum(tmap), len(tmap), lwc_target, rwc_target, ndt)
 	fmt.Printf("|  | %d | %d | %d |\n", MyMapSum(emap), len(emap), nlah)
 	fmt.Printf("|  | %d | %d |\n", MyMapSum(smap), len(smap))
 	fmt.Printf("|  | %d | %d |\n", MyMapSum(rmap), len(rmap))
