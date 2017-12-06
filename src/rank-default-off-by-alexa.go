@@ -75,7 +75,7 @@ func main() {
 			h := sha256.New()
 			h.Write(xml_ctx)
 
-			fmt.Printf("%x %s %d\n", h.Sum(nil), fn, min_rank)
+			fmt.Printf("%x %s %d\n", h.Sum(nil), fn, (min_rank/ 10) * 10)
 		}
 	}
 }
